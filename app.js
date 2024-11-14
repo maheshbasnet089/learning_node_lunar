@@ -1,6 +1,10 @@
 var express = require("express") // function 
+const DatabaseConnect = require("./database")
+const Blog = require("./model/blogModel")
 var app = express()
 
+app.use(express.json())
+DatabaseConnect()
 
 app.get("/",function(req,res){
     res.json({
@@ -8,20 +12,28 @@ app.get("/",function(req,res){
     })
 })
 
-
-app.get("/about",(req,res)=>{
+app.post("/blog",async function(req,res){
+    var title = req.body.title 
+    var subtitle = req.body.subtitle
+    var description = req.body.description
+ // alternative
+    // var {title,subtitle,description} = req.body
+   await Blog.create({
+        title : title, 
+        subtitle : subtitle, 
+        description : description
+    })
     res.json({
-        message : "About page"
+        message : "Blog created successfully"
     })
 })
 
-app.post("/register",(req,res)=>{
-    res.json({
-        message : "Post wala trigger vayo!!"
-    })
+app.get("/blog",async function(req,res){
+        var blogs = await Blog.find() // array 
+        res.json({
+            data : blogs
+        })
 })
-
-// handle /contact route too 
 
 
 app.listen(3000,()=>{
